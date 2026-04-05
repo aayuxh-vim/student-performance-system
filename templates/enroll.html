@@ -1,29 +1,41 @@
 {% extends "base.html" %}
+{% block title %}Enroll · Faculty{% endblock %}
 {% block content %}
 
-<h2>Enroll Student</h2>
+<h1 class="h3 fw-semibold mb-3">Enroll student</h1>
 
-<form method="POST" class="card p-4 shadow-sm">
+<form method="get" class="card card-sp p-3 mb-4" role="search">
+    <label class="form-label small text-muted">Filter students by name</label>
+    <div class="input-group">
+        <input type="search" name="search" value="{{ search or '' }}" class="form-control" placeholder="Search…">
+        <button class="btn btn-outline-secondary" type="submit">Search</button>
+    </div>
+</form>
+
+<form method="POST" class="card card-sp p-4">
 
     <div class="mb-3">
-        <label>Student</label>
-        <select name="student_id" class="form-select">
+        <label class="form-label">Student</label>
+        <select name="student_id" class="form-select" {% if not students %}disabled{% endif %}>
             {% for s in students %}
-            <option value="{{ s.student_id }}">{{ s.name }}</option>
+            <option value="{{ s.student_id }}">{{ s.prn or s.student_id }} — {{ s.name }}{% if s.email %} — {{ s.email }}{% endif %}</option>
             {% endfor %}
         </select>
+        {% if not students %}
+        <p class="small text-muted mt-2 mb-0">No students match this search (or none in your sections). Try clearing the search or add a student first.</p>
+        {% endif %}
     </div>
 
     <div class="mb-3">
-        <label>Section</label>
+        <label class="form-label">Section</label>
         <select name="section_id" class="form-select">
             {% for sec in sections %}
-            <option value="{{ sec.section_id }}">Section {{ sec.section_id }}</option>
+            <option value="{{ sec.section_id }}">{{ sec.course_name }} — sem {{ sec.semester }}, {{ sec.year }}{% if sec.room_no %} · {{ sec.room_no }}{% endif %}</option>
             {% endfor %}
         </select>
     </div>
 
-    <button class="btn btn-primary">Enroll</button>
+    <button type="submit" class="btn btn-primary" {% if not students %}disabled{% endif %}>Enroll</button>
 
 </form>
 

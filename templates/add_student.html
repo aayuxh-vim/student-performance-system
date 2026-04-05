@@ -1,22 +1,39 @@
 {% extends "base.html" %}
+{% block title %}Add student · Student Performance{% endblock %}
 {% block content %}
 
-<h2>Add Student</h2>
+<h1 class="h3 fw-semibold mb-3">Add student</h1>
 
-<form method="POST" class="card p-4 shadow-sm">
+<form method="POST" class="card card-sp p-4">
 
     <div class="mb-3">
-        <label>Name</label>
-        <input type="text" name="name" class="form-control" required>
+        <label class="form-label">PRN <span class="text-danger">*</span></label>
+        <input type="text" name="prn" class="form-control font-monospace" required maxlength="20" pattern="[0-9]{10}" placeholder="1262240002" autocomplete="off">
+        <div class="form-text">10-digit permanent roll number. CSE uses prefix <strong>126224</strong> (e.g. <code>1262240002</code>). Must match the department’s PRN prefix when one is set.</div>
     </div>
 
     <div class="mb-3">
-        <label>Email</label>
-        <input type="text" name="email" class="form-control">
+        <label class="form-label">Name</label>
+        <input type="text" name="name" class="form-control" required autocomplete="name">
     </div>
 
     <div class="mb-3">
-        <label>Department</label>
+        <label class="form-label">Email</label>
+        <input type="email" name="email" class="form-control" autocomplete="email">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Phone</label>
+        <input type="text" name="phone" class="form-control" autocomplete="tel">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Date of birth</label>
+        <input type="date" name="dob" class="form-control">
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Department</label>
         <select name="dept_id" class="form-select">
             {% for d in depts %}
             <option value="{{ d.dept_id }}">{{ d.dept_name }}</option>
@@ -25,11 +42,19 @@
     </div>
 
     <div class="mb-3">
-        <label>Enrollment Year</label>
-        <input type="number" name="year" class="form-control">
+        <label class="form-label">Enrollment year</label>
+        <input type="number" name="year" class="form-control" min="1990" max="2100">
     </div>
 
-    <button class="btn btn-primary">Add Student</button>
+    <div class="mb-3">
+        <label class="form-label">Status</label>
+        <select name="status" class="form-select">
+            <option value="active" selected>Active</option>
+            <option value="inactive">Inactive</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add student</button>
 
 </form>
 

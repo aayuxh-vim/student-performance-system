@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Faculty · Home{% endblock %}
+{% block content %}
+
+<div class="mb-4">
+    <h1 class="h3 fw-semibold mb-1">Faculty workspace</h1>
+    <p class="text-muted small mb-0">Manage students, sections, attendance, exams, assignments, and feedback. {% if session.role == 'faculty' %}You only see data for your sections where applicable.{% else %}Admin: full access.{% endif %}</p>
+</div>
+
+<div class="row g-3">
+    <div class="col-md-4">
+        <a href="{{ url_for('students') }}" class="text-decoration-none">
+            <div class="card card-sp p-4 h-100">
+                <h2 class="h6 fw-semibold text-dark">Students</h2>
+                <p class="text-muted small mb-0">Directory &amp; search</p>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="{{ url_for('add_student') }}" class="text-decoration-none">
+            <div class="card card-sp p-4 h-100">
+                <h2 class="h6 fw-semibold text-dark">Add student</h2>
+                <p class="text-muted small mb-0">Register a new student</p>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="{{ url_for('enroll') }}" class="text-decoration-none">
+            <div class="card card-sp p-4 h-100">
+                <h2 class="h6 fw-semibold text-dark">Enroll</h2>
+                <p class="text-muted small mb-0">Assign to sections</p>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="{{ url_for('attendance') }}" class="text-decoration-none">
+            <div class="card card-sp p-4 h-100">
+                <h2 class="h6 fw-semibold text-dark">Attendance</h2>
+                <p class="text-muted small mb-0">Present / absent / late</p>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="{{ url_for('exams') }}" class="text-decoration-none">
+            <div class="card card-sp p-4 h-100">
+                <h2 class="h6 fw-semibold text-dark">Exams &amp; results</h2>
+                <p class="text-muted small mb-0">Schedule &amp; enter marks</p>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="{{ url_for('assignments') }}" class="text-decoration-none">
+            <div class="card card-sp p-4 h-100">
+                <h2 class="h6 fw-semibold text-dark">Assignments</h2>
+                <p class="text-muted small mb-0">Create &amp; grade uploads</p>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="{{ url_for('dashboard') }}" class="text-decoration-none">
+            <div class="card card-sp p-4 h-100 border-primary border-opacity-25">
+                <h2 class="h6 fw-semibold text-primary">Dashboard</h2>
+                <p class="text-muted small mb-0">Attendance chart</p>
+            </div>
+        </a>
+    </div>
+    <div class="col-md-4">
+        <a href="{{ url_for('feedback') }}" class="text-decoration-none">
+            <div class="card card-sp p-4 h-100">
+                <h2 class="h6 fw-semibold text-dark">Feedback</h2>
+                <p class="text-muted small mb-0">Collect course feedback</p>
+            </div>
+        </a>
+    </div>
+</div>
+
+{% endblock %}

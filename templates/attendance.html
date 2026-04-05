@@ -1,36 +1,130 @@
-
 {% extends "base.html" %}
+{% block title %}Attendance · Faculty{% endblock %}
 {% block content %}
 
-<h2>Attendance</h2>
+<h1 class="h3 fw-semibold mb-1">Attendance sheet</h1>
+<p class="text-muted small mb-4">Choose a <strong>panel</strong> (department + course section) and <strong>date</strong>, load the roster, then tick <strong>Present</strong> or <strong>Late</strong> for each student. Anyone unticked is saved as <strong>absent</strong> when you save.</p>
 
-<form method="POST" class="card p-4 shadow-sm">
-
-    <div class="mb-3">
-        <label>Student</label>
-        <select name="enrollment_id" class="form-select">
-            {% for e in enrollments %}
-            <option value="{{ e.enrollment_id }}">{{ e.name }}</option>
-            {% endfor %}
-        </select>
+<form method="get" class="card card-sp p-3 mb-4">
+    <div class="row g-3 align-items-end">
+        <div class="col-md-5">
+            <label class="form-label fw-semibold">Section (panel)</label>
+            <select name="section_id" class="form-select" required>
+                <option value="">Select section…</option>
+                {% for sec in sections %}
+                <option value="{{ sec.section_id }}" {% if section_id == sec.section_id %}selected{% endif %}>
+                    {{ sec.dept_name }} — {{ sec.course_name }} · sem {{ sec.semester }}, {{ sec.year }}{% if sec.room_no %} · {{ sec.room_no }}{% endif %}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="col-md-4">
+            <label class="form-label fw-semibold">Date</label>
+            <input type="date" name="date" class="form-control" value="{{ adate.isoformat() }}">
+        </div>
+        <div class="col-md-3">
+            <button type="submit" class="btn btn-primary w-100">Load roster</button>
+        </div>
     </div>
-
-    <div class="mb-3">
-        <label>Date</label>
-        <input type="date" name="date" class="form-control">
+    {% if section_id %}
+    <div class="mt-2 small">
+        <a href="{{ url_for('attendance', section_id=section_id, date=prev_date) }}" class="text-decoration-none">← Previous day</a>
+        <span class="text-muted mx-2">|</span>
+        <a href="{{ url_for('attendance', section_id=section_id, date=next_date) }}" class="text-decoration-none">Next day →</a>
     </div>
-
-    <div class="mb-3">
-        <label>Status</label>
-        <select name="status" class="form-select">
-            <option value="present">Present</option>
-            <option value="absent">Absent</option>
-            <option value="late">Late</option>
-        </select>
-    </div>
-
-    <button class="btn btn-success">Submit</button>
-
+    {% endif %}
 </form>
+
+{% if section_id and not sections %}
+<div class="alert alert-warning">You have no assigned sections.</div>
+{% elif section_id and sheet is defined and sheet|length == 0 %}
+<div class="alert alert-info">No students enrolled in this section yet.</div>
+{% elif sheet and sheet|length > 0 %}
+
+<form method="post" class="card card-sp overflow-hidden">
+    <input type="hidden" name="section_id" value="{{ section_id }}">
+    <input type="hidden" name="date" value="{{ adate.isoformat() }}">
+    <input type="hidden" name="bulk_save" value="1">
+
+    <div class="p-3 border-bottom bg-light d-flex flex-wrap align-items-center justify-content-between gap-2">
+        <div>
+            <strong>{{ adate.strftime('%A, %d %b %Y') }}</strong>
+            <span class="text-muted small ms-2">{{ sheet|length }} students</span>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <button type="button" class="btn btn-sm btn-outline-primary" id="btnAllPresent">All present</button>
+            <button type="button" class="btn btn-sm btn-outline-secondary" id="btnClear">Clear ticks</button>
+            <button type="submit" class="btn btn-sm btn-success">Save attendance</button>
+        </div>
+    </div>
+
+    <div class="table-responsive" style="max-height: 70vh;">
+        <table class="table table-hover table-sm align-middle mb-0">
+            <thead class="table-light sticky-top" style="z-index: 1;">
+                <tr>
+                    <th class="ps-3" style="width:3rem;">#</th>
+                    <th>PRN</th>
+                    <th>Name</th>
+                    <th class="text-center" style="width:6rem;">Present</th>
+                    <th class="text-center pe-3" style="width:6rem;">Late</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in sheet %}
+                <tr>
+                    <td class="ps-3 text-muted">{{ loop.index }}</td>
+                    <td class="font-monospace small">{{ row.prn or "—" }}</td>
+                    <td class="fw-medium">{{ row.student_name }}</td>
+                    <td class="text-center">
+                        <input type="hidden" name="all_eid" value="{{ row.enrollment_id }}">
+                        <input class="form-check-input att-present" type="checkbox" name="present" value="{{ row.enrollment_id }}"
+                            {% if row.current_status == 'present' %}checked{% endif %}
+                            aria-label="Present {{ row.student_name }}">
+                    </td>
+                    <td class="text-center pe-3">
+                        <input class="form-check-input att-late" type="checkbox" name="late" value="{{ row.enrollment_id }}"
+                            {% if row.current_status == 'late' %}checked{% endif %}
+                            aria-label="Late {{ row.student_name }}">
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</form>
+
+<script>
+(function () {
+    const btnP = document.getElementById('btnAllPresent');
+    const btnC = document.getElementById('btnClear');
+    if (!btnP || !btnC) return;
+    btnP.addEventListener('click', function () {
+        document.querySelectorAll('.att-present').forEach(function (cb) { cb.checked = true; });
+        document.querySelectorAll('.att-late').forEach(function (cb) { cb.checked = false; });
+    });
+    btnC.addEventListener('click', function () {
+        document.querySelectorAll('.att-present, .att-late').forEach(function (cb) { cb.checked = false; });
+    });
+    document.querySelectorAll('.att-late').forEach(function (lateCb) {
+        lateCb.addEventListener('change', function () {
+            if (lateCb.checked) {
+                const row = lateCb.closest('tr');
+                const p = row && row.querySelector('.att-present');
+                if (p) p.checked = false;
+            }
+        });
+    });
+    document.querySelectorAll('.att-present').forEach(function (pCb) {
+        pCb.addEventListener('change', function () {
+            if (pCb.checked) {
+                const row = pCb.closest('tr');
+                const l = row && row.querySelector('.att-late');
+                if (l) l.checked = false;
+            }
+        });
+    });
+})();
+</script>
+{% endif %}
 
 {% endblock %}

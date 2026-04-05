@@ -1,13 +1,28 @@
 {% extends "base.html" %}
+{% block title %}Sign in · Student Performance{% endblock %}
 {% block content %}
 
-<form method="POST" class="card p-4 shadow-sm w-25 mx-auto">
-    <h3>Login</h3>
-
-    <input name="username" class="form-control mb-2" placeholder="Username">
-    <input name="password" type="password" class="form-control mb-2" placeholder="Password">
-
-    <button class="btn btn-dark">Login</button>
-</form>
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-12 col-sm-10 col-md-6 col-lg-4">
+        <div class="text-center mb-4">
+            <h1 class="h3 fw-semibold text-dark">Sign in</h1>
+            <p class="text-muted small mb-0">Students and faculty use different portals after sign-in.</p>
+            <p class="small text-muted mt-2 mb-0">Demo (after running <code>schema.sql</code>): <strong>jane</strong> / jane (student), <strong>smith</strong> / smith (faculty), <strong>admin</strong> / admin.</p>
+        </div>
+        <div class="card card-sp p-4">
+            <form method="post" novalidate>
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input id="username" name="username" type="text" class="form-control" autocomplete="username" required autofocus>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input id="password" name="password" type="password" class="form-control" autocomplete="current-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary w-100 fw-semibold">Continue</button>
+            </form>
+        </div>
+    </div>
+</div>
 
 {% endblock %}

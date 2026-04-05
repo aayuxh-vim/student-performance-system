@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block title %}Feedback{% endblock %}
+{% block content %}
+
+<h1 class="h3 fw-semibold mb-3">Course feedback</h1>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="card card-sp p-4">
+            <h2 class="h6 fw-semibold mb-3">Submit feedback</h2>
+            {% if sections %}
+            <form method="post">
+                <div class="mb-3">
+                    <label class="form-label">Section</label>
+                    <select name="section_id" class="form-select" required>
+                        {% for sec in sections %}
+                        <option value="{{ sec.section_id }}">{{ sec.course_name }} — sem {{ sec.semester }}, {{ sec.year }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Rating</label>
+                    <select name="rating" class="form-select" required>
+                        {% for n in [1,2,3,4,5] %}
+                        <option value="{{ n }}">{{ n }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Comments</label>
+                    <textarea name="comments" class="form-control" rows="3" placeholder="Optional"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send</button>
+            </form>
+            {% else %}
+            <p class="text-muted small mb-0">You need to be enrolled in a section to leave feedback.</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <h2 class="h6 fw-semibold mb-3">Your past feedback</h2>
+        {% if previous %}
+        <ul class="list-group shadow-sm">
+            {% for p in previous %}
+            <li class="list-group-item">
+                <div class="d-flex justify-content-between">
+                    <strong>{{ p.course_name }}</strong>
+                    <span class="badge bg-primary">{{ p.rating }}/5</span>
+                </div>
+                <p class="small text-muted mb-0">Sem {{ p.semester }}, {{ p.year }}</p>
+                {% if p.comments %}<p class="small mb-0 mt-2">{{ p.comments }}</p>{% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="text-muted">No feedback submitted yet.</p>
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}

@@ -1,15 +1,16 @@
 {% extends "base.html" %}
+{% block title %}Exams · Student Performance{% endblock %}
 {% block content %}
 
-<h2>Create Exam</h2>
+<h1 class="h3 fw-semibold mb-3">Exams</h1>
 
-<form method="POST" class="card p-4 shadow-sm mb-4">
+<form method="POST" class="card card-sp p-4 mb-4">
 
     <div class="mb-3">
         <label>Section</label>
         <select name="section_id" class="form-select">
             {% for sec in sections %}
-            <option value="{{ sec.section_id }}">Section {{ sec.section_id }}</option>
+            <option value="{{ sec.section_id }}">{{ sec.course_name }} — sem {{ sec.semester }}, {{ sec.year }}{% if sec.room_no %} · {{ sec.room_no }}{% endif %}</option>
             {% endfor %}
         </select>
     </div>
@@ -37,15 +38,17 @@
 </form>
 
 
-<h3>Add Result</h3>
+<h2 class="h5 fw-semibold mb-3">Add result</h2>
 
-<form method="POST" action="/results" class="card p-4 shadow-sm">
+<form method="POST" action="{{ url_for('results') }}" class="card card-sp p-4">
 
-    <input type="number" name="exam_id" placeholder="Exam ID" class="form-control mb-2">
-    <input type="number" name="student_id" placeholder="Student ID" class="form-control mb-2">
-    <input type="number" name="marks" placeholder="Marks" class="form-control mb-2">
+    <input type="number" name="exam_id" placeholder="Exam ID" class="form-control mb-2" required>
+    <input type="text" name="student_prn" class="form-control mb-2 font-monospace" placeholder="Student PRN (e.g. 1262240001)" pattern="[0-9]{10}" required>
+    <p class="small text-muted mb-2">Use the student’s 10-digit PRN from the Students page.</p>
+    <input type="number" name="marks" placeholder="Marks" class="form-control mb-2" required step="0.01">
+    <input type="text" name="grade" placeholder="Grade (optional)" class="form-control mb-2">
 
-    <button class="btn btn-success">Add Result</button>
+    <button type="submit" class="btn btn-success">Add result</button>
 
 </form>
 

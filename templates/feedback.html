@@ -1,20 +1,20 @@
-
 {% extends "base.html" %}
+{% block title %}Feedback · Student Performance{% endblock %}
 {% block content %}
 
-<h2>Feedback</h2>
+<h1 class="h3 fw-semibold mb-3">Feedback</h1>
 
-<form method="POST" class="card p-4 shadow-sm">
+<form method="POST" class="card card-sp p-4">
 
     <select name="student_id" class="form-select mb-2">
         {% for s in students %}
-        <option value="{{ s.student_id }}">{{ s.name }}</option>
+        <option value="{{ s.student_id }}">{{ s.prn or s.student_id }} — {{ s.name }}{% if s.dept_name %} ({{ s.dept_name }}){% endif %}</option>
         {% endfor %}
     </select>
 
     <select name="section_id" class="form-select mb-2">
         {% for sec in sections %}
-        <option value="{{ sec.section_id }}">Section {{ sec.section_id }}</option>
+        <option value="{{ sec.section_id }}">{{ sec.course_name }} — sem {{ sec.semester }}, {{ sec.year }}{% if sec.room_no %} · {{ sec.room_no }}{% endif %}</option>
         {% endfor %}
     </select>
 

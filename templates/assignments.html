@@ -1,32 +1,76 @@
 {% extends "base.html" %}
+{% block title %}Assignments · Faculty{% endblock %}
 {% block content %}
 
-<h2>Assignments</h2>
+<h1 class="h3 fw-semibold mb-3">Assignments</h1>
 
-<form method="POST" class="card p-4 shadow-sm mb-4">
-
-    <select name="section_id" class="form-select mb-2">
+<form method="POST" class="card card-sp p-4 mb-4">
+    <h2 class="h6 fw-semibold mb-3">Create assignment</h2>
+    <select name="section_id" class="form-select mb-2" required>
         {% for sec in sections %}
-        <option value="{{ sec.section_id }}">Section {{ sec.section_id }}</option>
+        <option value="{{ sec.section_id }}">{{ sec.course_name }} — sem {{ sec.semester }}, {{ sec.year }}{% if sec.room_no %} · {{ sec.room_no }}{% endif %}</option>
         {% endfor %}
     </select>
 
-    <input type="text" name="title" placeholder="Title" class="form-control mb-2">
-    <input type="date" name="due_date" class="form-control mb-2">
-    <input type="number" name="max" placeholder="Max Marks" class="form-control mb-2">
+    <input type="text" name="title" placeholder="Title" class="form-control mb-2" required>
+    <input type="date" name="due_date" class="form-control mb-2" required>
+    <input type="number" name="max" placeholder="Max marks" class="form-control mb-2" required>
 
-    <button class="btn btn-primary">Create</button>
+    <button type="submit" class="btn btn-primary">Create</button>
 </form>
 
+<h2 class="h5 fw-semibold mb-3">Grade submissions</h2>
+<p class="text-muted small">Students upload from their portal. Enter marks for pending rows below.</p>
 
-<h3>Submit Assignment</h3>
+{% if pending %}
+<div class="card card-sp mb-4">
+    <div class="table-responsive">
+        <table class="table align-middle mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th>Student</th>
+                    <th>Assignment</th>
+                    <th>Course</th>
+                    <th>Max</th>
+                    <th>Marks</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for p in pending %}
+                <tr>
+                    <td><span class="font-monospace">{{ p.student_prn or p.student_id }}</span> — {{ p.student_name }}</td>
+                    <td>{{ p.title }} <span class="text-muted small">(#{{ p.assignment_id }})</span></td>
+                    <td>{{ p.course_name }}</td>
+                    <td>{{ p.max_marks }}</td>
+                    <td>
+                        <form method="post" action="{{ url_for('grade_submission') }}" class="d-flex gap-1">
+                            <input type="hidden" name="submission_id" value="{{ p.submission_id }}">
+                            <input type="number" name="marks" class="form-control form-control-sm" style="width:5rem" step="0.01" max="{{ p.max_marks }}" placeholder="0" required>
+                            <button type="submit" class="btn btn-sm btn-success">Save</button>
+                        </form>
+                    </td>
+                    <td></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% else %}
+<p class="text-muted small mb-4">No ungraded submissions right now.</p>
+{% endif %}
 
-<form method="POST" action="/submit" class="card p-4 shadow-sm">
+{% if session.role == 'admin' %}
+<h2 class="h5 fw-semibold mb-3">Manual submission entry</h2>
+<p class="text-muted small">Admin: record a submission on behalf of a student (optional).</p>
+
+<form method="POST" action="{{ url_for('submit') }}" class="card card-sp p-4">
 
     <input type="number" name="assignment_id" placeholder="Assignment ID" class="form-control mb-2">
-    <input type="number" name="student_id" placeholder="Student ID" class="form-control mb-2">
+    <input type="text" name="student_prn" class="form-control mb-2 font-monospace" placeholder="Student PRN (10 digits)" pattern="[0-9]{10}" required>
     <input type="date" name="date" class="form-control mb-2">
-    <input type="number" name="marks" class="form-control mb-2">
+    <input type="number" name="marks" class="form-control mb-2" placeholder="Marks (optional)">
 
     <select name="status" class="form-select mb-2">
         <option value="submitted">Submitted</option>
@@ -34,7 +78,8 @@
         <option value="missing">Missing</option>
     </select>
 
-    <button class="btn btn-success">Submit</button>
+    <button type="submit" class="btn btn-outline-secondary">Save</button>
 </form>
+{% endif %}
 
 {% endblock %}
