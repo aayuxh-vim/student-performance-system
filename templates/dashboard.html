@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Dashboard</h2>
+
+<canvas id="chart"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+const data = {{ data | tojson }};
+const labels = data.map(d => d.status);
+const values = data.map(d => d.count);
+
+new Chart(document.getElementById('chart'), {
+    type: 'pie',
+    data: {
+        labels: labels,
+        datasets: [{ data: values }]
+    }
+});
+</script>
+
+{% endblock %}

@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Assignments</h2>
+
+<form method="POST" class="card p-4 shadow-sm mb-4">
+
+    <select name="section_id" class="form-select mb-2">
+        {% for sec in sections %}
+        <option value="{{ sec.section_id }}">Section {{ sec.section_id }}</option>
+        {% endfor %}
+    </select>
+
+    <input type="text" name="title" placeholder="Title" class="form-control mb-2">
+    <input type="date" name="due_date" class="form-control mb-2">
+    <input type="number" name="max" placeholder="Max Marks" class="form-control mb-2">
+
+    <button class="btn btn-primary">Create</button>
+</form>
+
+
+<h3>Submit Assignment</h3>
+
+<form method="POST" action="/submit" class="card p-4 shadow-sm">
+
+    <input type="number" name="assignment_id" placeholder="Assignment ID" class="form-control mb-2">
+    <input type="number" name="student_id" placeholder="Student ID" class="form-control mb-2">
+    <input type="date" name="date" class="form-control mb-2">
+    <input type="number" name="marks" class="form-control mb-2">
+
+    <select name="status" class="form-select mb-2">
+        <option value="submitted">Submitted</option>
+        <option value="late">Late</option>
+        <option value="missing">Missing</option>
+    </select>
+
+    <button class="btn btn-success">Submit</button>
+</form>
+
+{% endblock %}

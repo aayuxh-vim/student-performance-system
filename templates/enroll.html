@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+
+<h2>Enroll Student</h2>
+
+<form method="POST" class="card p-4 shadow-sm">
+
+    <div class="mb-3">
+        <label>Student</label>
+        <select name="student_id" class="form-select">
+            {% for s in students %}
+            <option value="{{ s.student_id }}">{{ s.name }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label>Section</label>
+        <select name="section_id" class="form-select">
+            {% for sec in sections %}
+            <option value="{{ sec.section_id }}">Section {{ sec.section_id }}</option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <button class="btn btn-primary">Enroll</button>
+
+</form>
+
+{% endblock %}
