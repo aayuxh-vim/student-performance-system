@@ -1,56 +1,68 @@
 {% extends "base.html" %}
-{% block title %}Dashboard · Student Performance{% endblock %}
-{% block content %}
 
-<div class="mb-4">
-    <h1 class="h3 fw-semibold mb-1">Attendance overview</h1>
-    <p class="text-muted small mb-0">Distribution of recorded attendance statuses.</p>
+{% block title %}Dashboard - Student System{% endblock %}
+
+{% block content %}
+<div class="header-actions">
+    <h2>System Overview</h2>
+    <div>
+        <a href="{{ url_for('add_department') }}" class="btn btn-outline" style="margin-right: 0.5rem; padding: 0.5rem 1rem;">+ Department</a>
+        <a href="{{ url_for('add_teacher') }}" class="btn btn-outline" style="margin-right: 0.5rem; padding: 0.5rem 1rem;">+ Teacher</a>
+        <a href="{{ url_for('add_course') }}" class="btn btn-outline" style="margin-right: 0.5rem; padding: 0.5rem 1rem;">+ Course</a>
+        <a href="{{ url_for('add_student') }}" class="btn">+ Student</a>
+    </div>
 </div>
 
-<div class="card card-sp p-4">
-    {% if data and data|length > 0 %}
-    <div class="mx-auto" style="max-width: 420px;">
-        <canvas id="chart" aria-label="Attendance pie chart"></canvas>
+<div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; margin-bottom: 2rem;">
+    <div class="card" style="text-align: center; padding: 1.5rem;">
+        <h3 style="color: var(--text-muted); font-size: 1rem; margin-bottom: 0.5rem;">Departments</h3>
+        <div style="font-size: 2rem; font-weight: 700;">{{ dept_count }}</div>
     </div>
-    <ul class="list-unstyled row row-cols-1 row-cols-sm-3 g-2 mt-4 small text-center mb-0" id="chart-legend"></ul>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-    <script>
-        const raw = {{ data | tojson }};
-        const palette = ['#22c55e', '#ef4444', '#f59e0b', '#3b82f6', '#8b5cf6', '#64748b'];
-        const labels = raw.map(d => d.status);
-        const values = raw.map(d => d.count);
-        const colors = labels.map((_, i) => palette[i % palette.length]);
+    <div class="card" style="text-align: center; padding: 1.5rem;">
+        <h3 style="color: var(--text-muted); font-size: 1rem; margin-bottom: 0.5rem;">Teachers</h3>
+        <div style="font-size: 2rem; font-weight: 700;">{{ teacher_count }}</div>
+    </div>
+    <div class="card" style="text-align: center; padding: 1.5rem;">
+        <h3 style="color: var(--text-muted); font-size: 1rem; margin-bottom: 0.5rem;">Courses</h3>
+        <div style="font-size: 2rem; font-weight: 700;">{{ course_count }}</div>
+    </div>
+    <div class="card" style="text-align: center; padding: 1.5rem;">
+        <h3 style="color: var(--text-muted); font-size: 1rem; margin-bottom: 0.5rem;">Students</h3>
+        <div style="font-size: 2rem; font-weight: 700;">{{ student_count }}</div>
+    </div>
+</div>
 
-        const legendEl = document.getElementById('chart-legend');
-        labels.forEach((label, i) => {
-            const li = document.createElement('li');
-            li.className = 'col';
-            li.innerHTML = `<span class="d-inline-block rounded-circle me-1" style="width:.6rem;height:.6rem;background:${colors[i]}"></span><strong class="text-capitalize">${label}</strong> · ${values[i]}`;
-            legendEl.appendChild(li);
-        });
-
-        new Chart(document.getElementById('chart'), {
-            type: 'doughnut',
-            data: {
-                labels,
-                datasets: [{
-                    data: values,
-                    backgroundColor: colors,
-                    borderWidth: 2,
-                    borderColor: '#fff'
-                }]
-            },
-            options: {
-                plugins: {
-                    legend: { display: false }
-                },
-                cutout: '58%'
-            }
-        });
-    </script>
+<div class="card">
+    <h3 style="margin-bottom: 1rem;">All Students</h3>
+    {% if students %}
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for s in students %}
+            <tr>
+                <td>#{{ s.student_id }}</td>
+                <td style="font-weight: 500;">{{ s.name }}</td>
+                <td style="color: var(--text-muted);">{{ s.email or 'N/A' }}</td>
+                <td>{{ s.dept_name or 'N/A' }}</td>
+                <td>
+                    <a href="{{ url_for('student_detail', student_id=s.student_id) }}" class="btn btn-outline" style="padding: 0.4rem 0.8rem; font-size: 0.875rem;">View</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     {% else %}
-    <p class="text-muted text-center mb-0 py-5">No attendance data yet. Record attendance to see a chart here.</p>
+    <div style="text-align: center; padding: 3rem 0; color: var(--text-muted);">
+        <p>No students found. Add a student to get started.</p>
+    </div>
     {% endif %}
 </div>
-
 {% endblock %}

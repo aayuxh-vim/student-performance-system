@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} - Student System{% endblock %}
+
+{% block content %}
+<div class="header-actions">
+    <h2>{{ title }}</h2>
+    <a href="{{ url_for('index') }}" class="btn btn-outline">Cancel</a>
+</div>
+
+<div class="card" style="max-width: 600px;">
+    <form method="POST">
+        {% for field in fields %}
+        <div class="form-group">
+            <label for="{{ field.name }}">{{ field.label }}</label>
+            <input type="text" id="{{ field.name }}" name="{{ field.name }}" required>
+        </div>
+        {% endfor %}
+        <button type="submit" class="btn">Save</button>
+    </form>
+</div>
+{% endblock %}

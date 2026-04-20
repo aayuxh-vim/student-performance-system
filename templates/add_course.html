@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}Add Course - Student System{% endblock %}
+
+{% block content %}
+<div class="header-actions">
+    <h2>Add New Course</h2>
+    <a href="{{ url_for('index') }}" class="btn btn-outline">Cancel</a>
+</div>
+
+<div class="card" style="max-width: 600px;">
+    <form method="POST">
+        <div class="form-group">
+            <label for="name">Course Name</label>
+            <input type="text" id="name" name="name" required placeholder="e.g. Algorithms 101">
+        </div>
+        <div class="form-group">
+            <label for="teacher_id">Teacher (Optional)</label>
+            <select name="teacher_id" id="teacher_id" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: white; border-radius: 8px; padding: 0.75rem 1rem;">
+                <option value="">-- None --</option>
+                {% for t in teachers %}
+                    <option value="{{ t.teacher_id }}">{{ t.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn">Save Course</button>
+    </form>
+</div>
+{% endblock %}

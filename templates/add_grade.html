@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block title %}Add Grade - Student System{% endblock %}
+
+{% block content %}
+<div class="header-actions">
+    <h2>Add Grade</h2>
+    <a href="{{ url_for('student_detail', student_id=data.student_id) }}" class="btn btn-outline">Cancel</a>
+</div>
+
+<div class="card" style="max-width: 600px;">
+    <form method="POST">
+        <div class="form-group">
+            <label>Student</label>
+            <input type="text" value="{{ data.student_name }}" disabled style="opacity: 0.7;">
+        </div>
+        <div class="form-group">
+            <label>Course</label>
+            <input type="text" value="{{ data.course_name }}" disabled style="opacity: 0.7;">
+        </div>
+        <div class="form-group">
+            <label for="score">Score</label>
+            <input type="number" id="score" name="score" step="0.01" min="0" max="100" required placeholder="e.g. 95.50">
+        </div>
+        <button type="submit" class="btn">Save Grade</button>
+    </form>
+</div>
+{% endblock %}

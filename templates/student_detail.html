@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}{{ student.name }} - Student System{% endblock %}
+
+{% block content %}
+<div class="header-actions">
+    <div>
+        <h2 style="margin-bottom: 0.5rem;">{{ student.name }}</h2>
+        <div style="color: var(--text-muted); font-size: 0.875rem;">
+            {{ student.email }} | Dept: {{ student.dept_name or 'None' }}
+        </div>
+    </div>
+    <div>
+        <a href="{{ url_for('index') }}" class="btn btn-outline" style="margin-right: 0.5rem;">Back</a>
+        <a href="{{ url_for('enroll', student_id=student.student_id) }}" class="btn">+ Enroll in Course</a>
+    </div>
+</div>
+
+<div class="card">
+    <h3 style="margin-bottom: 1.5rem; color: var(--text-muted);">Course Enrollments & Grades</h3>
+    {% if enrollments %}
+    <table>
+        <thead>
+            <tr>
+                <th>Course</th>
+                <th>Teacher</th>
+                <th>Score</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for e in enrollments %}
+            <tr>
+                <td style="font-weight: 500;">{{ e.course_name }}</td>
+                <td>{{ e.teacher_name or 'None' }}</td>
+                <td>
+                    {% if e.score %}
+                        <span style="color: var(--success); font-weight: 600;">{{ "%.2f"|format(e.score) }}</span>
+                    {% else %}
+                        <span style="color: var(--text-muted);">-</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if not e.score %}
+                        <a href="{{ url_for('add_grade', enrollment_id=e.enrollment_id) }}" class="btn" style="padding: 0.4rem 0.8rem; font-size: 0.875rem;">Add Grade</a>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <div style="text-align: center; padding: 2rem 0; color: var(--text-muted);">
+        <p>This student is not enrolled in any courses.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

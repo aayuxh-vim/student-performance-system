@@ -1,42 +1,23 @@
 {% extends "base.html" %}
-{% block title %}Enroll · Faculty{% endblock %}
+{% block title %}Enroll {{ student.name }} - Student System{% endblock %}
+
 {% block content %}
+<div class="header-actions">
+    <h2>Enroll {{ student.name }}</h2>
+    <a href="{{ url_for('student_detail', student_id=student.student_id) }}" class="btn btn-outline">Cancel</a>
+</div>
 
-<h1 class="h3 fw-semibold mb-3">Enroll student</h1>
-
-<form method="get" class="card card-sp p-3 mb-4" role="search">
-    <label class="form-label small text-muted">Filter students by name</label>
-    <div class="input-group">
-        <input type="search" name="search" value="{{ search or '' }}" class="form-control" placeholder="Search…">
-        <button class="btn btn-outline-secondary" type="submit">Search</button>
-    </div>
-</form>
-
-<form method="POST" class="card card-sp p-4">
-
-    <div class="mb-3">
-        <label class="form-label">Student</label>
-        <select name="student_id" class="form-select" {% if not students %}disabled{% endif %}>
-            {% for s in students %}
-            <option value="{{ s.student_id }}">{{ s.prn or s.student_id }} — {{ s.name }}{% if s.email %} — {{ s.email }}{% endif %}</option>
-            {% endfor %}
-        </select>
-        {% if not students %}
-        <p class="small text-muted mt-2 mb-0">No students match this search (or none in your sections). Try clearing the search or add a student first.</p>
-        {% endif %}
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Section</label>
-        <select name="section_id" class="form-select">
-            {% for sec in sections %}
-            <option value="{{ sec.section_id }}">{{ sec.course_name }} — sem {{ sec.semester }}, {{ sec.year }}{% if sec.room_no %} · {{ sec.room_no }}{% endif %}</option>
-            {% endfor %}
-        </select>
-    </div>
-
-    <button type="submit" class="btn btn-primary" {% if not students %}disabled{% endif %}>Enroll</button>
-
-</form>
-
+<div class="card" style="max-width: 600px;">
+    <form method="POST">
+        <div class="form-group">
+            <label for="course_id">Select Course</label>
+            <select name="course_id" id="course_id" required style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-color); color: white; border-radius: 8px; padding: 0.75rem 1rem; width: 100%;">
+                {% for c in courses %}
+                    <option value="{{ c.course_id }}">{{ c.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <button type="submit" class="btn">Enroll</button>
+    </form>
+</div>
 {% endblock %}

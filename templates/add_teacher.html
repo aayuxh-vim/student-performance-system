@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Add Student - Student System{% endblock %}
+{% block title %}Add Teacher - Student System{% endblock %}
 
 {% block content %}
 <div class="header-actions">
-    <h2>Add New Student</h2>
+    <h2>Add New Teacher</h2>
     <a href="{{ url_for('index') }}" class="btn btn-outline">Cancel</a>
 </div>
 
@@ -11,11 +11,11 @@
     <form method="POST">
         <div class="form-group">
             <label for="name">Full Name</label>
-            <input type="text" id="name" name="name" required placeholder="e.g. Jane Doe">
+            <input type="text" id="name" name="name" required placeholder="e.g. Dr. Alan Turing">
         </div>
         <div class="form-group">
             <label for="email">Email Address</label>
-            <input type="email" id="email" name="email" placeholder="jane@example.com">
+            <input type="email" id="email" name="email" placeholder="alan@cs.edu">
         </div>
         <div class="form-group">
             <label for="department_id">Department (Optional)</label>
@@ -26,7 +26,7 @@
                 {% endfor %}
             </select>
         </div>
-        <button type="submit" class="btn">Save Student</button>
+        <button type="submit" class="btn">Save Teacher</button>
     </form>
 </div>
 {% endblock %}
